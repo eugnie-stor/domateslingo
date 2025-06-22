@@ -3,1608 +3,456 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DomatesLingo - İngilizce Öğren</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <title>Geri Sayım</title>
     <style>
         :root {
-            --primary-color: #7ac70c;
-            --secondary-color: #58a700;
-            --accent-color: #b2e35a;
-            --dark-green: #3d7d00;
-            --text-color: #f0f0f0;
-            --light-text: #f8f8f8;
-            --dark-bg: #121212;
-            --darker-bg: #0a0a0a;
-            --card-bg: #1e1e1e;
-            --gray: #333333;
-            --dark-gray: #252525;
-            --light-gray: #444;
-            --shadow: 0 4px 8px rgba(0,0,0,0.3);
-            --shadow-hover: 0 6px 12px rgba(0,0,0,0.4);
-            --chatbot-bg: #1f2b38;
-        }
-        
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            --bg: #000000;
+            --text: #ffffff;
+            --accent: #0A84FF;
+            --card: #1C1C1E;
+            --button: #2C2C2E;
         }
         
         body {
-            background-color: var(--dark-bg);
-            color: var(--text-color);
-            overflow-x: hidden;
-        }
-        
-        /* Welcome Screen */
-        .welcome-screen {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: var(--darker-bg);
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
             display: flex;
             flex-direction: column;
-            justify-content: center;
             align-items: center;
-            z-index: 2000;
-            color: white;
-            text-align: center;
-            padding: 20px;
-            transition: all 0.8s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-        }
-        
-        .welcome-screen.hidden {
-            opacity: 0;
-            transform: scale(1.2);
-            pointer-events: none;
-        }
-        
-        .welcome-logo {
-            font-size: 6rem;
-            margin-bottom: 20px;
-            animation: bounce 1.5s infinite, rotate 4s infinite linear;
-            transform-origin: center;
-        }
-        
-        @keyframes bounce {
-            0%, 20%, 50%, 80%, 100% {transform: translateY(0) rotate(0deg);}
-            40% {transform: translateY(-30px) rotate(5deg);}
-            60% {transform: translateY(-15px) rotate(-5deg);}
-        }
-        
-        @keyframes rotate {
-            0% {transform: rotate(0deg);}
-            25% {transform: rotate(5deg);}
-            75% {transform: rotate(-5deg);}
-            100% {transform: rotate(0deg);}
-        }
-        
-        .welcome-title {
-            font-size: 2.8rem;
-            margin-bottom: 15px;
-            animation: fadeInUp 1s ease;
-        }
-        
-        .welcome-subtitle {
-            font-size: 1.3rem;
-            margin-bottom: 40px;
-            max-width: 600px;
-            opacity: 0;
-            animation: fadeInUp 1s ease 0.3s forwards;
-            color: #bbb;
-        }
-        
-        .welcome-button {
-            background-color: var(--primary-color);
-            color: white;
-            border: none;
-            padding: 18px 36px;
-            border-radius: 50px;
-            font-size: 1.3rem;
-            font-weight: 700;
-            cursor: pointer;
-            transition: all 0.3s;
-            box-shadow: 0 6px 12px rgba(0,0,0,0.2);
-            opacity: 0;
-            animation: fadeInUp 1s ease 0.6s forwards, pulse 2s infinite 1.6s;
-            position: relative;
+            justify-content: center;
             overflow: hidden;
         }
         
-        .welcome-button:hover {
-            transform: translateY(-5px) scale(1.05);
-            box-shadow: 0 10px 20px rgba(0,0,0,0.3);
-            background-color: var(--accent-color);
+        .countdown-container {
+            text-align: center;
+            margin-bottom: 40px;
         }
         
-        .welcome-button::after {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(45deg, transparent, rgba(255,255,255,0.3), transparent);
-            transform: translateX(-100%);
+        .countdown-title {
+            font-size: 24px;
+            font-weight: 600;
+            opacity: 0.8;
+            margin-bottom: 30px;
         }
         
-        .welcome-button:hover::after {
-            animation: shine 1.5s;
-        }
-        
-        @keyframes shine {
-            100% {transform: translateX(100%);}
-        }
-        
-        @keyframes fadeInUp {
-            from {
-                opacity: 0;
-                transform: translateY(20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-        
-        @keyframes pulse {
-            0% {transform: scale(1);}
-            50% {transform: scale(1.05);}
-            100% {transform: scale(1);}
-        }
-        
-        /* Auth Modal */
-        .auth-modal {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0,0,0,0.8);
+        .countdown-box {
             display: flex;
             justify-content: center;
-            align-items: center;
-            z-index: 2001;
-            opacity: 0;
-            pointer-events: none;
-            transition: opacity 0.3s ease;
-        }
-        
-        .auth-modal.active {
-            opacity: 1;
-            pointer-events: all;
-        }
-        
-        .auth-container {
-            background-color: var(--card-bg);
-            border-radius: 15px;
-            width: 90%;
-            max-width: 400px;
-            padding: 30px;
-            box-shadow: var(--shadow-hover);
-            transform: translateY(-50px);
-            transition: transform 0.3s ease;
-        }
-        
-        .auth-modal.active .auth-container {
-            transform: translateY(0);
-        }
-        
-        .auth-tabs {
-            display: flex;
-            margin-bottom: 20px;
-            border-bottom: 2px solid var(--gray);
-        }
-        
-        .auth-tab {
-            padding: 10px 20px;
-            cursor: pointer;
-            font-weight: 600;
-            color: var(--text-color);
-            opacity: 0.7;
-            transition: all 0.3s;
-        }
-        
-        .auth-tab.active {
-            opacity: 1;
-            color: var(--primary-color);
-            border-bottom: 3px solid var(--primary-color);
-            margin-bottom: -2px;
-        }
-        
-        .auth-form {
-            display: none;
-        }
-        
-        .auth-form.active {
-            display: block;
-        }
-        
-        .auth-form h2 {
-            margin-bottom: 20px;
-            text-align: center;
-            color: var(--primary-color);
-        }
-        
-        .input-group {
-            margin-bottom: 15px;
-        }
-        
-        .input-group label {
-            display: block;
-            margin-bottom: 5px;
-            font-size: 0.9rem;
-            color: #bbb;
-        }
-        
-        .input-group input {
-            width: 100%;
-            padding: 12px 15px;
-            border-radius: 8px;
-            border: 1px solid var(--gray);
-            background-color: var(--dark-bg);
-            color: var(--text-color);
-            font-size: 1rem;
-            transition: border 0.3s;
-        }
-        
-        .input-group input:focus {
-            outline: none;
-            border-color: var(--primary-color);
-        }
-        
-        .auth-button {
-            width: 100%;
-            padding: 14px;
-            border-radius: 8px;
-            border: none;
-            background-color: var(--primary-color);
-            color: white;
-            font-weight: 600;
-            font-size: 1rem;
-            cursor: pointer;
-            margin-top: 10px;
-            transition: all 0.3s;
-        }
-        
-        .auth-button:hover {
-            background-color: var(--accent-color);
-            transform: translateY(-2px);
-        }
-        
-        .auth-footer {
-            text-align: center;
-            margin-top: 20px;
-            font-size: 0.9rem;
-            color: #bbb;
-        }
-        
-        .auth-footer a {
-            color: var(--primary-color);
-            text-decoration: none;
-            cursor: pointer;
-        }
-        
-        .close-modal {
-            position: absolute;
-            top: 15px;
-            right: 15px;
-            font-size: 1.5rem;
-            color: #bbb;
-            cursor: pointer;
-            transition: color 0.3s;
-        }
-        
-        .close-modal:hover {
-            color: var(--primary-color);
-        }
-        
-        /* Navbar */
-        .navbar {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 15px 5%;
-            background-color: var(--card-bg);
-            box-shadow: var(--shadow);
-            position: sticky;
-            top: 0;
-            z-index: 1000;
-            transform: translateY(-100%);
-            opacity: 0;
-            transition: all 0.8s ease 0.5s;
-        }
-        
-        .navbar.visible {
-            transform: translateY(0);
-            opacity: 1;
-        }
-        
-        .logo {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            cursor: pointer;
-        }
-        
-        .logo-icon {
-            width: 40px;
-            height: 40px;
-            background-color: var(--primary-color);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-size: 1.5rem;
-        }
-        
-        .logo h1 {
-            color: var(--primary-color);
-            font-size: 1.8rem;
-            font-weight: 700;
-            letter-spacing: -1px;
-        }
-        
-        .nav-links {
-            display: flex;
-            gap: 25px;
-        }
-        
-        .nav-links a {
-            text-decoration: none;
-            color: var(--text-color);
-            font-weight: 500;
-            position: relative;
-            padding: 5px 0;
-            transition: color 0.3s;
-        }
-        
-        .nav-links a:hover {
-            color: var(--primary-color);
-        }
-        
-        .nav-links a::after {
-            content: '';
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            width: 0;
-            height: 2px;
-            background-color: var(--primary-color);
-            transition: width 0.3s;
-        }
-        
-        .nav-links a:hover::after {
-            width: 100%;
-        }
-        
-        .user-section {
-            display: flex;
-            align-items: center;
             gap: 15px;
         }
         
-        .auth-buttons {
+        .time-unit {
             display: flex;
-            gap: 10px;
+            flex-direction: column;
+            align-items: center;
         }
         
-        .auth-nav-button {
-            padding: 8px 16px;
-            border-radius: 20px;
-            font-size: 0.9rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s;
-        }
-        
-        .login-button {
-            background-color: transparent;
-            border: 2px solid var(--primary-color);
-            color: var(--primary-color);
-        }
-        
-        .login-button:hover {
-            background-color: rgba(122, 199, 12, 0.1);
-        }
-        
-        .signup-button {
-            background-color: var(--primary-color);
-            border: 2px solid var(--primary-color);
-            color: white;
-        }
-        
-        .signup-button:hover {
-            background-color: var(--accent-color);
-            border-color: var(--accent-color);
-        }
-        
-        .xp-display {
-            background-color: var(--gray);
-            padding: 5px 12px;
-            border-radius: 20px;
-            font-size: 0.9rem;
-            font-weight: 600;
-        }
-        
-        .user-avatar {
-            width: 40px;
-            height: 40px;
-            background-color: var(--primary-color);
-            border-radius: 50%;
+        .time-value {
+            font-size: 48px;
+            font-weight: 700;
+            width: 80px;
+            height: 80px;
             display: flex;
             align-items: center;
             justify-content: center;
-            color: white;
-            font-weight: bold;
-            cursor: pointer;
-        }
-        
-        /* XP Bar */
-        .xp-bar-container {
-            width: 100%;
-            height: 8px;
-            background-color: var(--gray);
-            position: relative;
-            transform: translateY(-20px);
-            opacity: 0;
-            transition: all 0.8s ease 0.7s;
-        }
-        
-        .xp-bar-container.visible {
-            transform: translateY(0);
-            opacity: 1;
-        }
-        
-        .xp-bar {
-            height: 100%;
-            background: linear-gradient(90deg, var(--secondary-color), var(--primary-color));
-            width: 0;
-            border-radius: 0 4px 4px 0;
-            transition: width 1s ease;
-            position: relative;
-        }
-        
-        .xp-bar-level {
-            position: absolute;
-            top: -30px;
-            right: 10px;
-            font-size: 0.8rem;
-            font-weight: 600;
-            color: var(--primary-color);
-        }
-        
-        /* Main Content */
-        .main-content {
-            padding: 40px 5%;
-            max-width: 1200px;
-            margin: 0 auto;
-            transform: translateY(20px);
-            opacity: 0;
-            transition: all 0.8s ease 0.9s;
-        }
-        
-        .main-content.visible {
-            transform: translateY(0);
-            opacity: 1;
-        }
-        
-        .section-title {
-            font-size: 2rem;
-            margin-bottom: 30px;
-            color: var(--primary-color);
-            position: relative;
-            padding-left: 15px;
-        }
-        
-        .section-title::before {
-            content: '';
-            position: absolute;
-            left: 0;
-            top: 5px;
-            height: 80%;
-            width: 5px;
-            background-color: var(--primary-color);
-            border-radius: 5px;
-        }
-        
-        /* Learning Path */
-        .learning-path {
-            margin-top: 40px;
-        }
-        
-        .unit {
-            position: relative;
-            width: 100%;
-            max-width: 800px;
-            margin-bottom: 60px;
-            background-color: var(--card-bg);
-            border-radius: 15px;
-            padding: 25px;
-            box-shadow: var(--shadow);
-            transition: transform 0.3s;
-        }
-        
-        .unit:hover {
-            transform: translateY(-5px);
-            box-shadow: var(--shadow-hover);
-        }
-        
-        .unit-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-        }
-        
-        .unit-title {
-            font-size: 1.5rem;
-            color: var(--primary-color);
-            font-weight: 600;
-        }
-        
-        .unit-progress {
-            font-size: 0.9rem;
-            color: var(--text-color);
-            opacity: 0.7;
-        }
-        
-        .unit-line {
-            width: 100%;
-            height: 6px;
-            background-color: var(--gray);
-            border-radius: 3px;
-            margin-bottom: 30px;
+            background-color: var(--card);
+            border-radius: 20px;
+            margin-bottom: 5px;
             position: relative;
             overflow: hidden;
         }
         
-        .unit-progress-line {
-            height: 100%;
-            background: linear-gradient(90deg, var(--secondary-color), var(--primary-color));
-            width: 0%;
-            border-radius: 3px;
-            transition: width 1s ease;
-        }
-        
-        .lessons-container {
-            display: flex;
-            justify-content: space-between;
-            position: relative;
-            margin-top: 20px;
-        }
-        
-        .lessons-container::before {
+        .time-value::after {
             content: '';
             position: absolute;
-            top: 50%;
+            top: 0;
             left: 0;
-            right: 0;
-            height: 4px;
-            background-color: var(--gray);
-            z-index: 1;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0) 50%);
         }
         
-        .lesson {
-            width: 60px;
-            height: 60px;
-            border-radius: 50%;
-            background-color: var(--card-bg);
-            border: 4px solid var(--gray);
+        .time-label {
+            font-size: 14px;
+            opacity: 0.6;
+        }
+        
+        .wait-text {
+            font-size: 18px;
+            opacity: 0.5;
+            margin-top: 40px;
+            font-weight: 500;
+        }
+        
+        .game-container {
+            position: fixed;
+            bottom: -300px;
+            left: 0;
+            width: 100%;
+            background-color: var(--card);
+            border-top-left-radius: 30px;
+            border-top-right-radius: 30px;
+            padding: 20px;
+            transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+            box-shadow: 0 -10px 30px rgba(0,0,0,0.3);
+        }
+        
+        .game-header {
             display: flex;
+            justify-content: space-between;
             align-items: center;
-            justify-content: center;
-            font-weight: bold;
-            color: var(--text-color);
+            margin-bottom: 15px;
+        }
+        
+        .game-title {
+            font-size: 18px;
+            font-weight: 600;
+        }
+        
+        .close-game {
+            background: none;
+            border: none;
+            color: var(--accent);
+            font-size: 16px;
+            font-weight: 500;
             cursor: pointer;
-            transition: all 0.3s;
+        }
+        
+        .game-area {
+            height: 150px;
+            background-color: var(--button);
+            border-radius: 15px;
             position: relative;
-            z-index: 2;
-            box-shadow: var(--shadow);
+            overflow: hidden;
         }
         
-        .lesson.locked {
-            cursor: not-allowed;
-            background-color: var(--dark-gray);
-            color: var(--light-gray);
-        }
-        
-        .lesson.active {
-            border-color: var(--primary-color);
-            background-color: var(--accent-color);
-            color: var(--darker-bg);
-            transform: scale(1.1);
-            box-shadow: 0 0 0 8px rgba(178, 227, 90, 0.3);
-        }
-        
-        .lesson.completed {
-            border-color: var(--primary-color);
-            background-color: var(--primary-color);
-            color: var(--white);
-        }
-        
-        .lesson-tooltip {
+        .ball {
+            width: 30px;
+            height: 30px;
+            background-color: var(--accent);
+            border-radius: 50%;
             position: absolute;
-            bottom: -40px;
+            bottom: 10px;
             left: 50%;
             transform: translateX(-50%);
-            background-color: var(--primary-color);
-            color: white;
-            padding: 5px 10px;
+        }
+        
+        .obstacle {
+            width: 40px;
+            height: 20px;
+            background-color: #FF453A;
+            position: absolute;
+            top: 0;
+            right: -40px;
             border-radius: 5px;
-            font-size: 0.8rem;
-            font-weight: normal;
+        }
+        
+        .confetti {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            background-color: #FFD60A;
             opacity: 0;
-            visibility: hidden;
-            transition: all 0.3s;
-            white-space: nowrap;
+            pointer-events: none;
+            z-index: 100;
         }
         
-        .lesson:hover .lesson-tooltip {
-            opacity: 1;
-            visibility: visible;
-            bottom: -50px;
+        .hidden {
+            display: none;
         }
         
-        .lesson-number {
-            font-size: 1.2rem;
-        }
-        
-        /* Daily Streak */
-        .daily-streak {
-            background-color: var(--card-bg);
-            border-radius: 15px;
-            padding: 20px;
-            box-shadow: var(--shadow);
-            margin-top: 40px;
-            display: flex;
-            align-items: center;
-            gap: 20px;
-        }
-        
-        .streak-icon {
-            width: 60px;
-            height: 60px;
-            background-color: #ff9500;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-size: 1.8rem;
-        }
-        
-        .streak-info h3 {
-            font-size: 1.2rem;
-            margin-bottom: 5px;
-        }
-        
-        .streak-info p {
-            color: #bbb;
-            font-size: 0.9rem;
-        }
-        
-        /* Lesson Screen */
-        .lesson-screen {
+        .celebration {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background-color: var(--darker-bg);
-            z-index: 2000;
-            display: flex;
-            flex-direction: column;
-            opacity: 0;
-            pointer-events: none;
-            transition: opacity 0.3s ease;
-        }
-        
-        .lesson-screen.active {
-            opacity: 1;
-            pointer-events: all;
-        }
-        
-        .lesson-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 20px;
-            background-color: var(--card-bg);
-            box-shadow: var(--shadow);
-        }
-        
-        .lesson-title {
-            font-size: 1.3rem;
-            color: var(--primary-color);
-        }
-        
-        .lesson-close {
-            font-size: 1.5rem;
-            color: #bbb;
-            cursor: pointer;
-            transition: color 0.3s;
-        }
-        
-        .lesson-close:hover {
-            color: var(--primary-color);
-        }
-        
-        .lesson-progress {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            font-size: 0.9rem;
-            color: #bbb;
-        }
-        
-        .progress-bar {
-            width: 150px;
-            height: 6px;
-            background-color: var(--gray);
-            border-radius: 3px;
-            overflow: hidden;
-        }
-        
-        .progress-fill {
-            height: 100%;
-            background-color: var(--primary-color);
-            width: 0%;
-            transition: width 0.3s;
-        }
-        
-        .lesson-content {
-            flex: 1;
-            padding: 30px;
+            background-color: rgba(0,0,0,0.9);
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
+            z-index: 1000;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.5s;
+        }
+        
+        .celebration-text {
+            font-size: 36px;
+            font-weight: 700;
+            margin-bottom: 20px;
             text-align: center;
         }
         
-        .question-container {
-            background-color: var(--card-bg);
-            border-radius: 15px;
-            padding: 30px;
-            width: 100%;
-            max-width: 600px;
-            box-shadow: var(--shadow);
-            margin-bottom: 30px;
+        .celebration-subtext {
+            font-size: 18px;
+            opacity: 0.8;
+            margin-bottom: 40px;
+            text-align: center;
         }
         
-        .question-text {
-            font-size: 1.5rem;
-            margin-bottom: 30px;
-            line-height: 1.5;
-        }
-        
-        .question-image {
-            max-width: 200px;
-            max-height: 200px;
-            margin: 0 auto 30px;
-            border-radius: 10px;
-        }
-        
-        .options-container {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 15px;
-            margin-bottom: 30px;
-        }
-        
-        .option-button {
-            padding: 15px;
-            border-radius: 10px;
-            border: 2px solid var(--gray);
-            background-color: var(--dark-bg);
-            color: var(--text-color);
-            font-size: 1rem;
-            cursor: pointer;
-            transition: all 0.3s;
-        }
-        
-        .option-button:hover {
-            border-color: var(--primary-color);
-            transform: translateY(-3px);
-        }
-        
-        .option-button.correct {
-            background-color: var(--primary-color);
-            color: white;
-            border-color: var(--primary-color);
-        }
-        
-        .option-button.incorrect {
-            background-color: #ff4d4d;
-            color: white;
-            border-color: #ff4d4d;
-        }
-        
-        .lesson-footer {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            width: 100%;
-            max-width: 600px;
-        }
-        
-        .xp-reward {
-            display: flex;
-            align-items: center;
-            gap: 5px;
-            color: var(--primary-color);
-            font-weight: 600;
-        }
-        
-        .next-button {
-            padding: 12px 25px;
-            background-color: var(--primary-color);
-            color: white;
+        .celebration-button {
+            background-color: var(--accent);
             border: none;
-            border-radius: 8px;
+            border-radius: 50px;
+            padding: 15px 30px;
+            font-size: 18px;
             font-weight: 600;
+            color: white;
             cursor: pointer;
-            transition: all 0.3s;
-            display: none;
-        }
-        
-        .next-button:hover {
-            background-color: var(--accent-color);
-            transform: translateY(-2px);
-        }
-        
-        .next-button.visible {
-            display: block;
-        }
-        
-        /* Feedback */
-        .feedback {
-            margin-top: 20px;
-            padding: 15px;
-            border-radius: 8px;
-            display: none;
-        }
-        
-        .feedback.correct {
-            background-color: rgba(122, 199, 12, 0.2);
-            color: var(--primary-color);
-            display: block;
-        }
-        
-        .feedback.incorrect {
-            background-color: rgba(255, 77, 77, 0.2);
-            color: #ff4d4d;
-            display: block;
-        }
-        
-        /* Animated Checkmark */
-        .checkmark {
-            width: 20px;
-            height: 20px;
-            border-radius: 50%;
-            display: block;
-            stroke-width: 4;
-            stroke: #fff;
-            stroke-miterlimit: 10;
-            margin: 10% auto;
-            box-shadow: inset 0px 0px 0px var(--primary-color);
-            animation: fill .4s ease-in-out .4s forwards, scale .3s ease-in-out .9s both;
-        }
-        
-        .checkmark__circle {
-            stroke-dasharray: 166;
-            stroke-dashoffset: 166;
-            stroke-width: 4;
-            stroke-miterlimit: 10;
-            stroke: var(--primary-color);
-            fill: none;
-            animation: stroke .6s cubic-bezier(0.65, 0, 0.45, 1) forwards;
-        }
-        
-        .checkmark__check {
-            transform-origin: 50% 50%;
-            stroke-dasharray: 48;
-            stroke-dashoffset: 48;
-            animation: stroke .3s cubic-bezier(0.65, 0, 0.45, 1) .8s forwards;
-        }
-        
-        @keyframes stroke {
-            100% {stroke-dashoffset: 0;}
-        }
-        
-        @keyframes scale {
-            0%, 100% {transform: none;}
-            50% {transform: scale3d(1.1, 1.1, 1);}
-        }
-        
-        @keyframes fill {
-            100% {box-shadow: inset 0px 0px 0px 30px var(--primary-color);}
-        }
-        
-        /* Responsive */
-        @media (max-width: 768px) {
-            .nav-links {
-                display: none;
-            }
-            
-            .auth-buttons {
-                display: none;
-            }
-            
-            .welcome-title {
-                font-size: 2rem;
-            }
-            
-            .welcome-subtitle {
-                font-size: 1.1rem;
-            }
-            
-            .welcome-button {
-                padding: 15px 30px;
-                font-size: 1.1rem;
-            }
-            
-            .lessons-container {
-                flex-wrap: wrap;
-                justify-content: center;
-                gap: 15px;
-            }
-            
-            .lessons-container::before {
-                display: none;
-            }
-            
-            .options-container {
-                grid-template-columns: 1fr;
-            }
-            
-            .question-text {
-                font-size: 1.2rem;
-            }
         }
     </style>
 </head>
 <body>
-    <!-- Hoş Geldin Ekranı -->
-    <div class="welcome-screen" id="welcomeScreen">
-        <div class="welcome-logo">🍅</div>
-        <h1 class="welcome-title">DomatesLingo'ya Hoş Geldin!</h1>
-        <p class="welcome-subtitle">Eğlenceli derslerle İngilizce öğrenmeye hazır mısın? Günlük 10 dakika ayırarak dil becerilerini geliştirebilirsin!</p>
-        <button class="welcome-button" id="welcomeButton">Hemen Başla</button>
+    <div class="countdown-container">
+        <div class="countdown-title">Geri Sayım</div>
+        <div class="countdown-box">
+            <div class="time-unit">
+                <div class="time-value" id="days">00</div>
+                <div class="time-label">Gün</div>
+            </div>
+            <div class="time-unit">
+                <div class="time-value" id="hours">00</div>
+                <div class="time-label">Saat</div>
+            </div>
+            <div class="time-unit">
+                <div class="time-value" id="minutes">00</div>
+                <div class="time-label">Dakika</div>
+            </div>
+            <div class="time-unit">
+                <div class="time-value" id="seconds">00</div>
+                <div class="time-label">Saniye</div>
+            </div>
+        </div>
+        <div class="wait-text">Bekle...</div>
     </div>
     
-    <!-- Auth Modal -->
-    <div class="auth-modal" id="authModal">
-        <div class="auth-container">
-            <span class="close-modal" id="closeModal">&times;</span>
-            <div class="auth-tabs">
-                <div class="auth-tab active" data-tab="login">Giriş Yap</div>
-                <div class="auth-tab" data-tab="signup">Kayıt Ol</div>
-            </div>
-            
-            <div class="auth-form active" id="loginForm">
-                <h2>Hesabına Giriş Yap</h2>
-                <div class="input-group">
-                    <label for="loginEmail">E-posta</label>
-                    <input type="email" id="loginEmail" placeholder="E-postanızı girin">
-                </div>
-                <div class="input-group">
-                    <label for="loginPassword">Şifre</label>
-                    <input type="password" id="loginPassword" placeholder="Şifrenizi girin">
-                </div>
-                <button class="auth-button" id="loginButton">Giriş Yap</button>
-                <div class="auth-footer">
-                    Hesabın yok mu? <a id="showSignup">Kayıt Ol</a>
-                </div>
-            </div>
-            
-            <div class="auth-form" id="signupForm">
-                <h2>Yeni Hesap Oluştur</h2>
-                <div class="input-group">
-                    <label for="signupName">Adınız</label>
-                    <input type="text" id="signupName" placeholder="Adınızı girin">
-                </div>
-                <div class="input-group">
-                    <label for="signupEmail">E-posta</label>
-                    <input type="email" id="signupEmail" placeholder="E-postanızı girin">
-                </div>
-                <div class="input-group">
-                    <label for="signupPassword">Şifre</label>
-                    <input type="password" id="signupPassword" placeholder="Şifrenizi girin (min. 6 karakter)">
-                </div>
-                <button class="auth-button" id="signupButton">Kayıt Ol</button>
-                <div class="auth-footer">
-                    Zaten hesabın var mı? <a id="showLogin">Giriş Yap</a>
-                </div>
-            </div>
+    <div class="game-container" id="gameContainer">
+        <div class="game-header">
+            <div class="game-title">Sıkılmayın Diye 🎮</div>
+            <button class="close-game" id="closeGame">Kapat</button>
+        </div>
+        <div class="game-area" id="gameArea">
+            <div class="ball" id="ball"></div>
         </div>
     </div>
     
-    <!-- Ders Ekranı -->
-    <div class="lesson-screen" id="lessonScreen">
-        <div class="lesson-header">
-            <div class="lesson-title" id="lessonTitle">Merhaba ve Tanışma</div>
-            <div class="lesson-progress">
-                <span id="currentQuestion">1</span>/<span id="totalQuestions">5</span>
-                <div class="progress-bar">
-                    <div class="progress-fill" id="progressFill" style="width: 20%"></div>
-                </div>
-            </div>
-            <div class="lesson-close" id="lessonClose">&times;</div>
-        </div>
-        
-        <div class="lesson-content">
-            <div class="question-container">
-                <div class="question-text" id="questionText">"Hello, how are you?" cümlesinin Türkçe karşılığı nedir?</div>
-                <div class="options-container" id="optionsContainer">
-                    <!-- Options will be added dynamically -->
-                </div>
-                <div class="feedback correct" id="correctFeedback">Doğru! 🎉 "Merhaba, nasılsın?" anlamına gelir.</div>
-                <div class="feedback incorrect" id="incorrectFeedback">Yanlış cevap. Doğrusu: "Merhaba, nasılsın?"</div>
-            </div>
-            
-            <div class="lesson-footer">
-                <div class="xp-reward">
-                    <i class="fas fa-star"></i>
-                    <span>10 XP</span>
-                </div>
-                <button class="next-button" id="nextButton">Sonraki Soru</button>
-            </div>
-        </div>
+    <div class="celebration hidden" id="celebration">
+        <div class="celebration-text">🎉 SÜPRİZ! 🎉</div>
+        <div class="celebration-subtext">İyi ki doğdun! Beklediğin şey nihayet geldi!</div>
+        <button class="celebration-button" id="celebrationButton">Harika!</button>
     </div>
-    
-    <!-- Navbar -->
-    <nav class="navbar" id="navbar">
-        <div class="logo">
-            <div class="logo-icon">🍅</div>
-            <h1>DomatesLingo</h1>
-        </div>
-        
-        <div class="nav-links">
-            <a href="#">Ana Sayfa</a>
-            <a href="#">Dersler</a>
-            <a href="#">Market</a>
-            <a href="#">Lider Tablosu</a>
-            <a href="#">Profil</a>
-        </div>
-        
-        <div class="user-section">
-            <div class="auth-buttons" id="authButtons">
-                <button class="auth-nav-button login-button" id="navLogin">Giriş Yap</button>
-                <button class="auth-nav-button signup-button" id="navSignup">Kayıt Ol</button>
-            </div>
-            <div class="user-info" id="userInfo" style="display: none;">
-                <div class="xp-display">0 XP</div>
-                <div class="user-avatar">Y</div>
-            </div>
-        </div>
-    </nav>
-    
-    <!-- XP Bar -->
-    <div class="xp-bar-container" id="xpBarContainer">
-        <div class="xp-bar-level">Seviye 1</div>
-        <div class="xp-bar" id="xpBar" style="width: 0%"></div>
-    </div>
-    
-    <!-- Main Content -->
-    <main class="main-content" id="mainContent">
-        <h2 class="section-title">İngilizce Yolculuğun</h2>
-        
-        <!-- Daily Streak -->
-        <div class="daily-streak">
-            <div class="streak-icon">
-                <i class="fas fa-fire"></i>
-            </div>
-            <div class="streak-info">
-                <h3>Günlük Seri</h3>
-                <p>1 gün devam etti - Yarın 2 XP kazan!</p>
-            </div>
-        </div>
-        
-        <!-- Ders Yolculuğu -->
-        <section class="learning-path">
-            <!-- Ünite 1 -->
-            <div class="unit">
-                <div class="unit-header">
-                    <h3 class="unit-title">Temel Bilgiler</h3>
-                    <div class="unit-progress">0/5 ders tamamlandı</div>
-                </div>
-                <div class="unit-line">
-                    <div class="unit-progress-line" id="unit1Progress" style="width: 0%"></div>
-                </div>
-                <div class="lessons-container">
-                    <div class="lesson active" data-lesson="1" id="lesson1">
-                        <div class="lesson-number">1</div>
-                        <div class="lesson-tooltip">Merhaba ve Tanışma</div>
-                    </div>
-                    <div class="lesson locked" data-lesson="2" id="lesson2">
-                        <div class="lesson-number">2</div>
-                        <div class="lesson-tooltip">Temel Sorular</div>
-                    </div>
-                    <div class="lesson locked" data-lesson="3" id="lesson3">
-                        <div class="lesson-number">3</div>
-                        <div class="lesson-tooltip">Sayılar</div>
-                    </div>
-                    <div class="lesson locked" data-lesson="4" id="lesson4">
-                        <div class="lesson-number">4</div>
-                        <div class="lesson-tooltip">Renkler</div>
-                    </div>
-                    <div class="lesson locked" data-lesson="5" id="lesson5">
-                        <div class="lesson-number">5</div>
-                        <div class="lesson-tooltip">Aile Üyeleri</div>
-                    </div>
-                </div>
-            </div>
-            
-            <!-- Ünite 2 -->
-            <div class="unit">
-                <div class="unit-header">
-                    <h3 class="unit-title">Günlük Yaşam</h3>
-                    <div class="unit-progress">Kilitli - 5 ders</div>
-                </div>
-                <div class="unit-line">
-                    <div class="unit-progress-line" style="width: 0%"></div>
-                </div>
-                <div class="lessons-container">
-                                      <div class="lesson locked" data-lesson="7">
-                        <div class="lesson-number">2</div>
-                        <div class="lesson-tooltip">Alışveriş</div>
-                    </div>
-                    <div class="lesson locked" data-lesson="8">
-                        <div class="lesson-number">3</div>
-                        <div class="lesson-tooltip">Yön Tarifi</div>
-                    </div>
-                    <div class="lesson locked" data-lesson="9">
-                        <div class="lesson-number">4</div>
-                        <div class="lesson-tooltip">Zaman</div>
-                    </div>
-                    <div class="lesson locked" data-lesson="10">
-                        <div class="lesson-number">5</div>
-                        <div class="lesson-tooltip">Hava Durumu</div>
-                    </div>
-                </div>
-            </div>
-        </section>
-    </main>
 
     <script>
-        // DOM Elements
-        const welcomeScreen = document.getElementById('welcomeScreen');
-        const welcomeButton = document.getElementById('welcomeButton');
-        const authModal = document.getElementById('authModal');
-        const closeModal = document.getElementById('closeModal');
-        const authTabs = document.querySelectorAll('.auth-tab');
-        const authForms = document.querySelectorAll('.auth-form');
-        const showSignup = document.getElementById('showSignup');
-        const showLogin = document.getElementById('showLogin');
-        const loginButton = document.getElementById('loginButton');
-        const signupButton = document.getElementById('signupButton');
-        const navLogin = document.getElementById('navLogin');
-        const navSignup = document.getElementById('navSignup');
-        const authButtons = document.getElementById('authButtons');
-        const userInfo = document.getElementById('userInfo');
-        const navbar = document.getElementById('navbar');
-        const xpBarContainer = document.getElementById('xpBarContainer');
-        const xpBar = document.getElementById('xpBar');
-        const mainContent = document.getElementById('mainContent');
-        const lessonScreen = document.getElementById('lessonScreen');
-        const lessonClose = document.getElementById('lessonClose');
-        const nextButton = document.getElementById('nextButton');
-        const lessons = document.querySelectorAll('.lesson');
+        // Oyun değişkenleri
+        let ball = document.getElementById('ball');
+        let gameArea = document.getElementById('gameArea');
+        let gameContainer = document.getElementById('gameContainer');
+        let obstacles = [];
+        let score = 0;
+        let gameSpeed = 2;
+        let isGameRunning = false;
+        let gameInterval;
+        let obstacleInterval;
+        let ballPosition = 50;
+        let keys = {};
         
-        // App State
-        let currentUser = null;
-        let xp = 0;
-        let level = 1;
-        let currentLesson = 1;
-        let currentQuestionIndex = 0;
-        let questions = [];
+        // Oyun kontrolleri
+        document.addEventListener('keydown', (e) => {
+            keys[e.key] = true;
+        });
         
-        // Sample Questions for Lesson 1
-        const lesson1Questions = [
-            {
-                question: "'Hello, how are you?' cümlesinin Türkçe karşılığı nedir?",
-                options: ["Merhaba, nasılsın?", "Günaydın", "Hoşçakal", "Teşekkür ederim"],
-                correctAnswer: 0,
-                feedback: "Doğru! 🎉 'Merhaba, nasılsın?' anlamına gelir."
-            },
-            {
-                question: "'Good morning' nasıl söylenir?",
-                options: ["İyi akşamlar", "Günaydın", "İyi geceler", "Merhaba"],
-                correctAnswer: 1,
-                feedback: "Doğru! 'Good morning' Türkçede 'Günaydın' demektir."
-            },
-            {
-                question: "'Thank you' ifadesinin Türkçe karşılığı nedir?",
-                options: ["Lütfen", "Teşekkür ederim", "Özür dilerim", "Rica ederim"],
-                correctAnswer: 1,
-                feedback: "Doğru! 'Thank you' Türkçede 'Teşekkür ederim' demektir."
-            },
-            {
-                question: "'What is your name?' sorusuna nasıl cevap verilir?",
-                options: ["I am fine", "My name is...", "I am 25 years old", "Nice to meet you"],
-                correctAnswer: 1,
-                feedback: "Doğru! 'My name is...' şeklinde cevap verilir."
-            },
-            {
-                question: "'Nice to meet you' ifadesinin anlamı nedir?",
-                options: ["Görüşürüz", "Tanıştığımıza memnun oldum", "Nasılsın?", "Teşekkürler"],
-                correctAnswer: 1,
-                feedback: "Doğru! 'Nice to meet you' Türkçede 'Tanıştığımıza memnun oldum' demektir."
+        document.addEventListener('keyup', (e) => {
+            keys[e.key] = false;
+        });
+        
+        // Oyunu başlat
+        function startGame() {
+            if (isGameRunning) return;
+            
+            isGameRunning = true;
+            gameContainer.style.transform = 'translateY(0)';
+            
+            // Top hareketi
+            gameInterval = setInterval(() => {
+                if (keys['ArrowLeft'] && ballPosition > 10) {
+                    ballPosition -= 5;
+                }
+                if (keys['ArrowRight'] && ballPosition < 90) {
+                    ballPosition += 5;
+                }
+                ball.style.left = `${ballPosition}%`;
+            }, 20);
+            
+            // Engelleri oluştur
+            obstacleInterval = setInterval(createObstacle, 2000);
+        }
+        
+        // Engel oluştur
+        function createObstacle() {
+            const obstacle = document.createElement('div');
+            obstacle.className = 'obstacle';
+            obstacle.style.top = `${Math.random() * 100}px`;
+            gameArea.appendChild(obstacle);
+            obstacles.push({
+                element: obstacle,
+                x: 100,
+                y: parseFloat(obstacle.style.top)
+            });
+        }
+        
+        // Oyun döngüsü
+        function gameLoop() {
+            obstacles.forEach((obstacle, index) => {
+                obstacle.x -= gameSpeed;
+                obstacle.element.style.right = `${obstacle.x}%`;
+                
+                // Çarpışma kontrolü
+                if (obstacle.x < 50 && obstacle.x > 30 && 
+                    Math.abs(ballPosition - 50) < 20 && 
+                    Math.abs(parseFloat(obstacle.element.style.top) - 70) < 30) {
+                    endGame();
+                }
+                
+                // Engel ekrandan çıktı
+                if (obstacle.x < -10) {
+                    gameArea.removeChild(obstacle.element);
+                    obstacles.splice(index, 1);
+                    score++;
+                    gameSpeed += 0.1;
+                }
+            });
+            
+            if (isGameRunning) {
+                requestAnimationFrame(gameLoop);
             }
-        ];
+        }
         
-        // Initialize App
-        function initApp() {
-            // Check if user is logged in from previous session
-            const savedUser = localStorage.getItem('domatesLingoUser');
-            if (savedUser) {
-                currentUser = JSON.parse(savedUser);
-                updateUIAfterLogin();
+        // Oyunu bitir
+        function endGame() {
+            isGameRunning = false;
+            clearInterval(gameInterval);
+            clearInterval(obstacleInterval);
+            alert(`Oyun bitti! Skor: ${score}`);
+            resetGame();
+        }
+        
+        // Oyunu sıfırla
+        function resetGame() {
+            obstacles.forEach(obstacle => {
+                gameArea.removeChild(obstacle.element);
+            });
+            obstacles = [];
+            score = 0;
+            gameSpeed = 2;
+            ballPosition = 50;
+            ball.style.left = '50%';
+        }
+        
+        // Oyunu kapat
+        document.getElementById('closeGame').addEventListener('click', () => {
+            gameContainer.style.transform = 'translateY(300px)';
+            if (isGameRunning) endGame();
+        });
+        
+        // Konfeti efekti
+        function createConfetti() {
+            const colors = ['#FFD60A', '#FF9F0A', '#FF375F', '#0A84FF', '#BF5AF2'];
+            
+            for (let i = 0; i < 150; i++) {
+                const confetti = document.createElement('div');
+                confetti.className = 'confetti';
+                
+                const size = Math.random() * 12 + 3;
+                const color = colors[Math.floor(Math.random() * colors.length)];
+                const angle = Math.random() * Math.PI * 2;
+                const velocity = Math.random() * 10 + 5;
+                const delay = Math.random() * 0.5;
+                const duration = Math.random() * 3 + 2;
+                
+                confetti.style.width = `${size}px`;
+                confetti.style.height = `${size}px`;
+                confetti.style.backgroundColor = color;
+                confetti.style.left = `${Math.random() * 100}vw`;
+                confetti.style.top = `-10px`;
+                confetti.style.borderRadius = Math.random() > 0.5 ? '50%' : '0';
+                
+                document.body.appendChild(confetti);
+                
+                // GSAP animasyonu
+                confetti.animate([
+                    { transform: `translateY(0) rotate(0deg)`, opacity: 1 },
+                    { transform: `translateY(${window.innerHeight + 10}px) rotate(${Math.random() * 360}deg)`, opacity: 0 }
+                ], {
+                    duration: duration * 1000,
+                    delay: delay * 1000,
+                    easing: 'cubic-bezier(0.1, 0.8, 0.3, 1)'
+                });
+                
+                setTimeout(() => {
+                    confetti.remove();
+                }, (duration + delay) * 1000);
+            }
+        }
+        
+        // Geri sayım fonksiyonu
+        function updateCountdown() {
+            const now = new Date();
+            const currentYear = now.getFullYear();
+            let targetDate = new Date(currentYear, 5, 23); // 23 Haziran
+            
+            if (now > targetDate) {
+                targetDate = new Date(currentYear + 1, 5, 23);
             }
             
-            // Set up event listeners
-            setupEventListeners();
+            const diff = targetDate - now;
             
-            // Hide welcome screen after animation
+            const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+            
+            document.getElementById('days').textContent = days.toString().padStart(2, '0');
+            document.getElementById('hours').textContent = hours.toString().padStart(2, '0');
+            document.getElementById('minutes').textContent = minutes.toString().padStart(2, '0');
+            document.getElementById('seconds').textContent = seconds.toString().padStart(2, '0');
+            
+            // Geri sayım bittiğinde
+            if (diff <= 0) {
+                clearInterval(countdownInterval);
+                document.getElementById('celebration').classList.remove('hidden');
+                setTimeout(() => {
+                    document.getElementById('celebration').style.opacity = '1';
+                }, 100);
+                
+                createConfetti();
+                setInterval(createConfetti, 3000);
+            }
+        }
+        
+        // Kutlama butonu
+        document.getElementById('celebrationButton').addEventListener('click', () => {
+            document.getElementById('celebration').style.opacity = '0';
             setTimeout(() => {
-                welcomeScreen.classList.add('hidden');
-                navbar.classList.add('visible');
-                xpBarContainer.classList.add('visible');
-                mainContent.classList.add('visible');
+                document.getElementById('celebration').classList.add('hidden');
             }, 500);
-        }
+        });
         
-        // Set up event listeners
-        function setupEventListeners() {
-            welcomeButton.addEventListener('click', () => {
-                welcomeScreen.classList.add('hidden');
-                navbar.classList.add('visible');
-                xpBarContainer.classList.add('visible');
-                mainContent.classList.add('visible');
-            });
-            
-            // Auth modal tabs
-            authTabs.forEach(tab => {
-                tab.addEventListener('click', () => {
-                    authTabs.forEach(t => t.classList.remove('active'));
-                    tab.classList.add('active');
-                    
-                    const tabId = tab.getAttribute('data-tab');
-                    authForms.forEach(form => form.classList.remove('active'));
-                    document.getElementById(`${tabId}Form`).classList.add('active');
-                });
-            });
-            
-            // Show signup/login forms
-            showSignup.addEventListener('click', () => {
-                authTabs.forEach(t => t.classList.remove('active'));
-                document.querySelector('[data-tab="signup"]').classList.add('active');
-                authForms.forEach(form => form.classList.remove('active'));
-                document.getElementById('signupForm').classList.add('active');
-            });
-            
-            showLogin.addEventListener('click', () => {
-                authTabs.forEach(t => t.classList.remove('active'));
-                document.querySelector('[data-tab="login"]').classList.add('active');
-                authForms.forEach(form => form.classList.remove('active'));
-                document.getElementById('loginForm').classList.add('active');
-            });
-            
-            // Open auth modal from navbar
-            navLogin.addEventListener('click', () => {
-                authModal.classList.add('active');
-                authTabs.forEach(t => t.classList.remove('active'));
-                document.querySelector('[data-tab="login"]').classList.add('active');
-                authForms.forEach(form => form.classList.remove('active'));
-                document.getElementById('loginForm').classList.add('active');
-            });
-            
-            navSignup.addEventListener('click', () => {
-                authModal.classList.add('active');
-                authTabs.forEach(t => t.classList.remove('active'));
-                document.querySelector('[data-tab="signup"]').classList.add('active');
-                authForms.forEach(form => form.classList.remove('active'));
-                document.getElementById('signupForm').classList.add('active');
-            });
-            
-            // Close auth modal
-            closeModal.addEventListener('click', () => {
-                authModal.classList.remove('active');
-            });
-            
-            // Login button
-            loginButton.addEventListener('click', handleLogin);
-            
-            // Signup button
-            signupButton.addEventListener('click', handleSignup);
-            
-            // Lesson close button
-            lessonClose.addEventListener('click', () => {
-                lessonScreen.classList.remove('active');
-            });
-            
-            // Next question button
-            nextButton.addEventListener('click', showNextQuestion);
-            
-            // Lesson click handlers
-            lessons.forEach(lesson => {
-                lesson.addEventListener('click', () => {
-                    if (!lesson.classList.contains('locked')) {
-                        startLesson(parseInt(lesson.getAttribute('data-lesson')));
-                    }
-                });
-            });
-        }
+        // Oyunu 30 saniye sonra otomatik aç
+        setTimeout(() => {
+            if (!document.getElementById('celebration').classList.contains('hidden')) return;
+            startGame();
+            gameLoop();
+        }, 30000);
         
-        // Handle login
-        function handleLogin() {
-            const email = document.getElementById('loginEmail').value;
-            const password = document.getElementById('loginPassword').value;
-            
-            // Simple validation
-            if (!email || !password) {
-                alert('Lütfen tüm alanları doldurun.');
-                return;
-            }
-            
-            // In a real app, you would send this to a server
-            // For demo purposes, we'll just create a user object
-            currentUser = {
-                name: email.split('@')[0],
-                email,
-                xp: 0,
-                level: 1,
-                completedLessons: []
-            };
-            
-            // Save to localStorage
-            localStorage.setItem('domatesLingoUser', JSON.stringify(currentUser));
-            
-            // Update UI
-            updateUIAfterLogin();
-            
-            // Close modal
-            authModal.classList.remove('active');
-            
-            // Clear form
-            document.getElementById('loginEmail').value = '';
-            document.getElementById('loginPassword').value = '';
-        }
-        
-        // Handle signup
-        function handleSignup() {
-            const name = document.getElementById('signupName').value;
-            const email = document.getElementById('signupEmail').value;
-            const password = document.getElementById('signupPassword').value;
-            
-            // Simple validation
-            if (!name || !email || !password) {
-                alert('Lütfen tüm alanları doldurun.');
-                return;
-            }
-            
-            if (password.length < 6) {
-                alert('Şifre en az 6 karakter olmalıdır.');
-                return;
-            }
-            
-            // In a real app, you would send this to a server
-            // For demo purposes, we'll just create a user object
-            currentUser = {
-                name,
-                email,
-                xp: 0,
-                level: 1,
-                completedLessons: []
-            };
-            
-            // Save to localStorage
-            localStorage.setItem('domatesLingoUser', JSON.stringify(currentUser));
-            
-            // Update UI
-            updateUIAfterLogin();
-            
-            // Close modal
-            authModal.classList.remove('active');
-            
-            // Clear form
-            document.getElementById('signupName').value = '';
-            document.getElementById('signupEmail').value = '';
-            document.getElementById('signupPassword').value = '';
-        }
-        
-        // Update UI after login
-        function updateUIAfterLogin() {
-            authButtons.style.display = 'none';
-            userInfo.style.display = 'flex';
-            
-            // Update user info
-            document.querySelector('.user-avatar').textContent = currentUser.name.charAt(0).toUpperCase();
-            document.querySelector('.xp-display').textContent = `${currentUser.xp} XP`;
-            
-            // Update XP bar
-            updateXpBar(currentUser.xp, currentUser.level);
-            
-            // Unlock completed lessons
-            currentUser.completedLessons.forEach(lessonId => {
-                const lesson = document.querySelector(`.lesson[data-lesson="${lessonId}"]`);
-                if (lesson) {
-                    lesson.classList.remove('active', 'locked');
-                    lesson.classList.add('completed');
-                }
-            });
-            
-            // Unlock next lesson if available
-            if (currentUser.completedLessons.length > 0) {
-                const nextLessonId = Math.max(...currentUser.completedLessons) + 1;
-                const nextLesson = document.querySelector(`.lesson[data-lesson="${nextLessonId}"]`);
-                if (nextLesson) {
-                    nextLesson.classList.remove('locked');
-                    nextLesson.classList.add('active');
-                }
-            }
-        }
-        
-        // Update XP bar
-        function updateXpBar(xp, level) {
-            const xpForNextLevel = level * 100;
-            const xpPercentage = (xp / xpForNextLevel) * 100;
-            xpBar.style.width = `${xpPercentage}%`;
-            document.querySelector('.xp-bar-level').textContent = `Seviye ${level}`;
-        }
-        
-        // Start a lesson
-        function startLesson(lessonId) {
-            currentLesson = lessonId;
-            currentQuestionIndex = 0;
-            
-            // Load questions for this lesson
-            if (lessonId === 1) {
-                questions = lesson1Questions;
-            } else {
-                // In a real app, you would load questions from a database
-                questions = [];
-            }
-            
-            // Update lesson screen
-            document.getElementById('lessonTitle').textContent = document.querySelector(`.lesson[data-lesson="${lessonId}"] .lesson-tooltip`).textContent;
-            document.getElementById('currentQuestion').textContent = '1';
-            document.getElementById('totalQuestions').textContent = questions.length.toString();
-            document.getElementById('progressFill').style.width = '0%';
-            
-            // Show first question
-            showQuestion(currentQuestionIndex);
-            
-            // Show lesson screen
-            lessonScreen.classList.add('active');
-        }
-        
-        // Show a question
-        function showQuestion(index) {
-            const question = questions[index];
-            const optionsContainer = document.getElementById('optionsContainer');
-            
-            // Update question text
-            document.getElementById('questionText').textContent = question.question;
-            
-            // Clear options
-            optionsContainer.innerHTML = '';
-            
-            // Add options
-            question.options.forEach((option, i) => {
-                const optionButton = document.createElement('button');
-                optionButton.className = 'option-button';
-                optionButton.textContent = option;
-                optionButton.addEventListener('click', () => checkAnswer(i, question.correctAnswer));
-                optionsContainer.appendChild(optionButton);
-            });
-            
-            // Hide feedback and next button
-            document.getElementById('correctFeedback').style.display = 'none';
-            document.getElementById('incorrectFeedback').style.display = 'none';
-            document.getElementById('nextButton').style.display = 'none';
-            
-            // Update progress
-            document.getElementById('currentQuestion').textContent = (index + 1).toString();
-            document.getElementById('progressFill').style.width = `${((index + 1) / questions.length) * 100}%`;
-        }
-        
-        // Check answer
-        function checkAnswer(selectedIndex, correctIndex) {
-            const optionButtons = document.querySelectorAll('.option-button');
-            const correctFeedback = document.getElementById('correctFeedback');
-            const incorrectFeedback = document.getElementById('incorrectFeedback');
-            
-            // Disable all buttons
-            optionButtons.forEach(button => {
-                button.disabled = true;
-            });
-            
-            // Mark correct and incorrect answers
-            optionButtons.forEach((button, index) => {
-                if (index === correctIndex) {
-                    button.classList.add('correct');
-                } else if (index === selectedIndex && selectedIndex !== correctIndex) {
-                    button.classList.add('incorrect');
-                }
-            });
-            
-            // Show feedback
-            if (selectedIndex === correctIndex) {
-                correctFeedback.textContent = questions[currentQuestionIndex].feedback;
-                correctFeedback.style.display = 'block';
-                
-                // Add XP if not already completed
-                if (!currentUser.completedLessons.includes(currentLesson)) {
-                    currentUser.xp += 10;
-                    document.querySelector('.xp-display').textContent = `${currentUser.xp} XP`;
-                    updateXpBar(currentUser.xp, currentUser.level);
-                    localStorage.setItem('domatesLingoUser', JSON.stringify(currentUser));
-                }
-            } else {
-                incorrectFeedback.textContent = questions[currentQuestionIndex].feedback;
-                incorrectFeedback.style.display = 'block';
-            }
-            
-            // Show next button if not last question
-            if (currentQuestionIndex < questions.length - 1) {
-                document.getElementById('nextButton').style.display = 'block';
-            } else {
-                // Last question - mark lesson as completed
-                if (!currentUser.completedLessons.includes(currentLesson)) {
-                    currentUser.completedLessons.push(currentLesson);
-                    localStorage.setItem('domatesLingoUser', JSON.stringify(currentUser));
-                    
-                    // Update lesson UI
-                    const lessonElement = document.querySelector(`.lesson[data-lesson="${currentLesson}"]`);
-                    lessonElement.classList.remove('active');
-                    lessonElement.classList.add('completed');
-                    
-                    // Unlock next lesson if available
-                    const nextLessonId = currentLesson + 1;
-                    const nextLesson = document.querySelector(`.lesson[data-lesson="${nextLessonId}"]`);
-                    if (nextLesson) {
-                        nextLesson.classList.remove('locked');
-                        nextLesson.classList.add('active');
-                    }
-                    
-                    // Update unit progress
-                    updateUnitProgress();
-                }
-                
-                // Change button text to "Dersi Tamamla"
-                document.getElementById('nextButton').textContent = 'Dersi Tamamla';
-                document.getElementById('nextButton').style.display = 'block';
-            }
-        }
-        
-        // Show next question
-        function showNextQuestion() {
-            if (currentQuestionIndex < questions.length - 1) {
-                currentQuestionIndex++;
-                showQuestion(currentQuestionIndex);
-            } else {
-                // Lesson completed
-                lessonScreen.classList.remove('active');
-            }
-        }
-        
-        // Update unit progress
-        function updateUnitProgress() {
-            const completedLessonsInUnit = currentUser.completedLessons.filter(id => id <= 5).length;
-            const progressPercentage = (completedLessonsInUnit / 5) * 100;
-            document.getElementById('unit1Progress').style.width = `${progressPercentage}%`;
-            document.querySelector('.unit-progress').textContent = `${completedLessonsInUnit}/5 ders tamamlandı`;
-        }
-        
-        // Initialize the app
-        initApp();
+        // Geri sayımı başlat
+        const countdownInterval = setInterval(updateCountdown, 1000);
+        updateCountdown();
     </script>
 </body>
 </html>
