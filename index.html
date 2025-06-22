@@ -3,48 +3,87 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Geri Sayım</title>
+    <title>Özel Geri Sayım</title>
     <style>
+        :root {
+            --bg: #121212;
+            --card: #1E1E1E;
+            --text: #FFFFFF;
+            --accent: #FF4081;
+        }
+        
         body {
             margin: 0;
             padding: 0;
             font-family: 'Helvetica Neue', sans-serif;
-            background-color: #000;
-            color: #fff;
-            height: 100vh;
+            background-color: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            text-align: center;
             transition: background-color 1.5s ease;
             overflow: hidden;
         }
-
+        
         .countdown-container {
-            background: rgba(255, 255, 255, 0.05);
-            padding: 40px 60px;
-            border-radius: 16px;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(10px);
+            background-color: var(--card);
+            border-radius: 20px;
+            padding: 40px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            max-width: 500px;
+            width: 90%;
+            transition: all 0.8s ease;
         }
-
+        
+        .countdown-title {
+            font-size: 24px;
+            font-weight: 600;
+            margin-bottom: 30px;
+            opacity: 0.8;
+        }
+        
         .countdown {
-            font-size: 3rem;
-            font-weight: 300;
-            letter-spacing: 3px;
-            margin-bottom: 10px;
-            color: #fff;
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 30px;
         }
-
-        .info-text {
-            font-size: 1rem;
-            color: rgba(255, 255, 255, 0.6);
+        
+        .time-unit {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        .time-value {
+            font-size: 42px;
+            font-weight: 700;
+            width: 80px;
+            height: 80px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            margin-bottom: 5px;
+        }
+        
+        .time-label {
+            font-size: 12px;
+            opacity: 0.6;
             text-transform: uppercase;
-            letter-spacing: 2px;
+            letter-spacing: 1px;
         }
-
-        /* Gizli kutlama ekranı */
+        
+        .info-text {
+            font-size: 16px;
+            opacity: 0.5;
+        }
+        
+        /* Kutlama Ekranı */
         .celebration {
             position: fixed;
             top: 0;
@@ -57,38 +96,48 @@
             justify-content: center;
             opacity: 0;
             pointer-events: none;
-            transition: opacity 2s ease;
+            transition: opacity 1.5s ease;
             z-index: 100;
+            background-color: rgba(0, 0, 0, 0.9);
         }
-
-        .celebration h1 {
-            font-size: 4rem;
-            font-weight: 700;
-            margin-bottom: 20px;
-            transform: translateY(30px);
+        
+        .birthday-content {
+            text-align: center;
+            transform: scale(0.9);
+            transition: transform 1s ease;
             opacity: 0;
-            transition: all 1s ease 0.5s;
-            color: #fff;
         }
-
-        .celebration p {
-            font-size: 1.5rem;
-            opacity: 0;
-            transform: translateY(20px);
-            transition: all 1s ease 1s;
-            color: rgba(255, 255, 255, 0.8);
+        
+        .birthday-text {
+            font-size: 48px;
+            font-weight: 800;
+            margin-bottom: 30px;
+            background: linear-gradient(45deg, #FF4081, #FF9100);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
         }
-
-        /* Konfeti stilleri */
+        
+        .birthday-image {
+            width: 300px;
+            height: 300px;
+            background-image: url('https://i.imgur.com/JW9qCZa.png');
+            background-size: contain;
+            background-repeat: no-repeat;
+            background-position: center;
+            margin: 0 auto 30px;
+            filter: drop-shadow(0 10px 20px rgba(255, 64, 129, 0.4));
+        }
+        
         .confetti {
             position: absolute;
-            width: 12px;
-            height: 12px;
+            width: 15px;
+            height: 15px;
+            background-color: #FF4081;
             opacity: 0;
             z-index: 10;
-            animation: confetti-fall 4s linear forwards;
+            animation: confetti-fall 5s linear forwards;
         }
-
+        
         @keyframes confetti-fall {
             0% {
                 transform: translateY(-100px) rotate(0deg);
@@ -99,23 +148,39 @@
                 opacity: 0;
             }
         }
-
-        /* Sayaç bitince arkaplan */
-        .celebrating {
-            background-color: #121212;
-        }
     </style>
 </head>
 <body>
     <div class="countdown-container">
-        <div class="countdown" id="countdown">00:00:00:00</div>
-        <div class="info-text">Süre dolana kadar bekleyin</div>
+        <div class="countdown-title">23 Haziran 00:08'e Kalan Süre</div>
+        <div class="countdown">
+            <div class="time-unit">
+                <div class="time-value" id="days">00</div>
+                <div class="time-label">Gün</div>
+            </div>
+            <div class="time-unit">
+                <div class="time-value" id="hours">00</div>
+                <div class="time-label">Saat</div>
+            </div>
+            <div class="time-unit">
+                <div class="time-value" id="minutes">00</div>
+                <div class="time-label">Dakika</div>
+            </div>
+            <div class="time-unit">
+                <div class="time-value" id="seconds">00</div>
+                <div class="time-label">Saniye</div>
+            </div>
+        </div>
+        <div class="info-text">Süre dolana kadar bekleyin...</div>
     </div>
-
-    <!-- Gizli kutlama ekranı -->
+    
+    <!-- Kutlama Ekranı -->
     <div class="celebration" id="celebration">
-        <h1>İyi ki doğdun!</h1>
-        <p>Beklenen an nihayet geldi 🎉</p>
+        <div class="birthday-content">
+            <div class="birthday-text">İyi ki doğdun ben!</div>
+            <div class="birthday-image"></div>
+            <p>Doğum günün kutlu olsun! 🎂🎉</p>
+        </div>
     </div>
 
     <script>
@@ -123,11 +188,9 @@
         function updateCountdown() {
             const now = new Date();
             const currentYear = now.getFullYear();
-            let targetDate = new Date(currentYear, 5, 23); // 23 Haziran
             
-            if (now > targetDate) {
-                targetDate = new Date(currentYear + 1, 5, 23);
-            }
+            // 23 Haziran 00:08 hedef tarihi
+            const targetDate = new Date(currentYear, 5, 23, 0, 8, 0);
             
             const diff = targetDate - now;
             
@@ -136,56 +199,58 @@
             const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
             const seconds = Math.floor((diff % (1000 * 60)) / 1000);
             
-            document.getElementById('countdown').textContent = 
-                `${days.toString().padStart(2, '0')}:${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+            document.getElementById('days').textContent = days.toString().padStart(2, '0');
+            document.getElementById('hours').textContent = hours.toString().padStart(2, '0');
+            document.getElementById('minutes').textContent = minutes.toString().padStart(2, '0');
+            document.getElementById('seconds').textContent = seconds.toString().padStart(2, '0');
             
+            // Geri sayım bittiğinde
             if (diff <= 0) {
                 startCelebration();
             }
         }
-
+        
         // Kutlama fonksiyonu
         function startCelebration() {
             const celebration = document.getElementById('celebration');
+            const countdownContainer = document.querySelector('.countdown-container');
             
-            // Arkaplanı değiştir
-            document.body.classList.add('celebrating');
+            // Geri sayımı gizle
+            countdownContainer.style.opacity = '0';
+            countdownContainer.style.transform = 'translateY(-20px)';
             
             // Kutlama ekranını göster
-            celebration.style.opacity = '1';
-            celebration.style.pointerEvents = 'auto';
-            
-            // Animasyonları başlat
             setTimeout(() => {
-                celebration.querySelector('h1').style.opacity = '1';
-                celebration.querySelector('h1').style.transform = 'translateY(0)';
-                celebration.querySelector('p').style.opacity = '1';
-                celebration.querySelector('p').style.transform = 'translateY(0)';
-            }, 300);
-            
-            // Konfeti yağmuru
-            createConfetti();
-            setInterval(createConfetti, 300);
+                celebration.style.opacity = '1';
+                celebration.style.pointerEvents = 'auto';
+                
+                // İçeriği animasyonla göster
+                setTimeout(() => {
+                    document.querySelector('.birthday-content').style.opacity = '1';
+                    document.querySelector('.birthday-content').style.transform = 'scale(1)';
+                }, 300);
+                
+                // Konfeti yağmuru
+                createConfetti();
+                setInterval(createConfetti, 300);
+            }, 800);
         }
-
-        // Konfeti oluşturma
+        
+        // Konfeti oluştur
         function createConfetti() {
-            const colors = ['#ffffff', '#e0e0e0', '#a0a0a0', '#ffd700', '#c0c0c0'];
-            const shapes = ['circle', 'square', 'triangle'];
+            const colors = ['#FF4081', '#FF9100', '#00B0FF', '#76FF03', '#FFEB3B'];
             
             for (let i = 0; i < 80; i++) {
                 const confetti = document.createElement('div');
                 confetti.className = 'confetti';
                 
-                // Rastgele özellikler
-                const size = Math.random() * 10 + 5;
+                const size = Math.random() * 12 + 5;
                 const color = colors[Math.floor(Math.random() * colors.length)];
-                const shape = shapes[Math.floor(Math.random() * shapes.length)];
                 const left = Math.random() * 100;
                 const delay = Math.random() * 3;
                 const duration = Math.random() * 3 + 2;
+                const shape = Math.random() > 0.5 ? 'circle' : 'square';
                 
-                // Stilleri uygula
                 confetti.style.width = `${size}px`;
                 confetti.style.height = `${size}px`;
                 confetti.style.backgroundColor = color;
@@ -193,28 +258,18 @@
                 confetti.style.animationDelay = `${delay}s`;
                 confetti.style.animationDuration = `${duration}s`;
                 
-                // Şekiller
                 if (shape === 'circle') {
                     confetti.style.borderRadius = '50%';
-                } else if (shape === 'triangle') {
-                    confetti.style.clipPath = 'polygon(50% 0%, 0% 100%, 100% 100%)';
-                    confetti.style.backgroundColor = 'transparent';
-                    confetti.style.borderLeft = `${size/2}px solid transparent`;
-                    confetti.style.borderRight = `${size/2}px solid transparent`;
-                    confetti.style.borderBottom = `${size}px solid ${color}`;
-                    confetti.style.width = '0';
-                    confetti.style.height = '0';
                 }
                 
                 document.body.appendChild(confetti);
                 
-                // Temizle
                 setTimeout(() => {
                     confetti.remove();
                 }, duration * 1000);
             }
         }
-
+        
         // Geri sayımı başlat
         setInterval(updateCountdown, 1000);
         updateCountdown();
