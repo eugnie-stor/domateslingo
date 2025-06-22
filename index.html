@@ -5,402 +5,121 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Geri Sayım</title>
     <style>
-        :root {
-            --bg: #000000;
-            --text: #ffffff;
-            --accent: #0A84FF;
-            --card: #1C1C1E;
-            --button: #2C2C2E;
-        }
-        
         body {
             margin: 0;
             padding: 0;
-            font-family: -apple-system, BlinkMacSystemFont, sans-serif;
-            background-color: var(--bg);
-            color: var(--text);
-            min-height: 100vh;
+            font-family: 'Helvetica Neue', sans-serif;
+            background-color: #000;
+            color: #fff;
+            height: 100vh;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            overflow: hidden;
-        }
-        
-        .countdown-container {
             text-align: center;
-            margin-bottom: 40px;
-        }
-        
-        .countdown-title {
-            font-size: 24px;
-            font-weight: 600;
-            opacity: 0.8;
-            margin-bottom: 30px;
-        }
-        
-        .countdown-box {
-            display: flex;
-            justify-content: center;
-            gap: 15px;
-        }
-        
-        .time-unit {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-        
-        .time-value {
-            font-size: 48px;
-            font-weight: 700;
-            width: 80px;
-            height: 80px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background-color: var(--card);
-            border-radius: 20px;
-            margin-bottom: 5px;
-            position: relative;
+            transition: background-color 1.5s ease;
             overflow: hidden;
         }
-        
-        .time-value::after {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(135deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0) 50%);
+
+        .countdown-container {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 40px 60px;
+            border-radius: 16px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
         }
-        
-        .time-label {
-            font-size: 14px;
-            opacity: 0.6;
+
+        .countdown {
+            font-size: 3rem;
+            font-weight: 300;
+            letter-spacing: 3px;
+            margin-bottom: 10px;
+            color: #fff;
         }
-        
-        .wait-text {
-            font-size: 18px;
-            opacity: 0.5;
-            margin-top: 40px;
-            font-weight: 500;
+
+        .info-text {
+            font-size: 1rem;
+            color: rgba(255, 255, 255, 0.6);
+            text-transform: uppercase;
+            letter-spacing: 2px;
         }
-        
-        .game-container {
-            position: fixed;
-            bottom: -300px;
-            left: 0;
-            width: 100%;
-            background-color: var(--card);
-            border-top-left-radius: 30px;
-            border-top-right-radius: 30px;
-            padding: 20px;
-            transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
-            box-shadow: 0 -10px 30px rgba(0,0,0,0.3);
-        }
-        
-        .game-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 15px;
-        }
-        
-        .game-title {
-            font-size: 18px;
-            font-weight: 600;
-        }
-        
-        .close-game {
-            background: none;
-            border: none;
-            color: var(--accent);
-            font-size: 16px;
-            font-weight: 500;
-            cursor: pointer;
-        }
-        
-        .game-area {
-            height: 150px;
-            background-color: var(--button);
-            border-radius: 15px;
-            position: relative;
-            overflow: hidden;
-        }
-        
-        .ball {
-            width: 30px;
-            height: 30px;
-            background-color: var(--accent);
-            border-radius: 50%;
-            position: absolute;
-            bottom: 10px;
-            left: 50%;
-            transform: translateX(-50%);
-        }
-        
-        .obstacle {
-            width: 40px;
-            height: 20px;
-            background-color: #FF453A;
-            position: absolute;
-            top: 0;
-            right: -40px;
-            border-radius: 5px;
-        }
-        
-        .confetti {
-            position: absolute;
-            width: 10px;
-            height: 10px;
-            background-color: #FFD60A;
-            opacity: 0;
-            pointer-events: none;
-            z-index: 100;
-        }
-        
-        .hidden {
-            display: none;
-        }
-        
+
+        /* Gizli kutlama ekranı */
         .celebration {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background-color: rgba(0,0,0,0.9);
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            z-index: 1000;
             opacity: 0;
             pointer-events: none;
-            transition: opacity 0.5s;
+            transition: opacity 2s ease;
+            z-index: 100;
         }
-        
-        .celebration-text {
-            font-size: 36px;
+
+        .celebration h1 {
+            font-size: 4rem;
             font-weight: 700;
             margin-bottom: 20px;
-            text-align: center;
+            transform: translateY(30px);
+            opacity: 0;
+            transition: all 1s ease 0.5s;
+            color: #fff;
         }
-        
-        .celebration-subtext {
-            font-size: 18px;
-            opacity: 0.8;
-            margin-bottom: 40px;
-            text-align: center;
+
+        .celebration p {
+            font-size: 1.5rem;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 1s ease 1s;
+            color: rgba(255, 255, 255, 0.8);
         }
-        
-        .celebration-button {
-            background-color: var(--accent);
-            border: none;
-            border-radius: 50px;
-            padding: 15px 30px;
-            font-size: 18px;
-            font-weight: 600;
-            color: white;
-            cursor: pointer;
+
+        /* Konfeti stilleri */
+        .confetti {
+            position: absolute;
+            width: 12px;
+            height: 12px;
+            opacity: 0;
+            z-index: 10;
+            animation: confetti-fall 4s linear forwards;
+        }
+
+        @keyframes confetti-fall {
+            0% {
+                transform: translateY(-100px) rotate(0deg);
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(100vh) rotate(720deg);
+                opacity: 0;
+            }
+        }
+
+        /* Sayaç bitince arkaplan */
+        .celebrating {
+            background-color: #121212;
         }
     </style>
 </head>
 <body>
     <div class="countdown-container">
-        <div class="countdown-title">Geri Sayım</div>
-        <div class="countdown-box">
-            <div class="time-unit">
-                <div class="time-value" id="days">00</div>
-                <div class="time-label">Gün</div>
-            </div>
-            <div class="time-unit">
-                <div class="time-value" id="hours">00</div>
-                <div class="time-label">Saat</div>
-            </div>
-            <div class="time-unit">
-                <div class="time-value" id="minutes">00</div>
-                <div class="time-label">Dakika</div>
-            </div>
-            <div class="time-unit">
-                <div class="time-value" id="seconds">00</div>
-                <div class="time-label">Saniye</div>
-            </div>
-        </div>
-        <div class="wait-text">Bekle...</div>
+        <div class="countdown" id="countdown">00:00:00:00</div>
+        <div class="info-text">Süre dolana kadar bekleyin</div>
     </div>
-    
-    <div class="game-container" id="gameContainer">
-        <div class="game-header">
-            <div class="game-title">Sıkılmayın Diye 🎮</div>
-            <button class="close-game" id="closeGame">Kapat</button>
-        </div>
-        <div class="game-area" id="gameArea">
-            <div class="ball" id="ball"></div>
-        </div>
-    </div>
-    
-    <div class="celebration hidden" id="celebration">
-        <div class="celebration-text">🎉 SÜPRİZ! 🎉</div>
-        <div class="celebration-subtext">İyi ki doğdun! Beklediğin şey nihayet geldi!</div>
-        <button class="celebration-button" id="celebrationButton">Harika!</button>
+
+    <!-- Gizli kutlama ekranı -->
+    <div class="celebration" id="celebration">
+        <h1>İyi ki doğdun!</h1>
+        <p>Beklenen an nihayet geldi 🎉</p>
     </div>
 
     <script>
-        // Oyun değişkenleri
-        let ball = document.getElementById('ball');
-        let gameArea = document.getElementById('gameArea');
-        let gameContainer = document.getElementById('gameContainer');
-        let obstacles = [];
-        let score = 0;
-        let gameSpeed = 2;
-        let isGameRunning = false;
-        let gameInterval;
-        let obstacleInterval;
-        let ballPosition = 50;
-        let keys = {};
-        
-        // Oyun kontrolleri
-        document.addEventListener('keydown', (e) => {
-            keys[e.key] = true;
-        });
-        
-        document.addEventListener('keyup', (e) => {
-            keys[e.key] = false;
-        });
-        
-        // Oyunu başlat
-        function startGame() {
-            if (isGameRunning) return;
-            
-            isGameRunning = true;
-            gameContainer.style.transform = 'translateY(0)';
-            
-            // Top hareketi
-            gameInterval = setInterval(() => {
-                if (keys['ArrowLeft'] && ballPosition > 10) {
-                    ballPosition -= 5;
-                }
-                if (keys['ArrowRight'] && ballPosition < 90) {
-                    ballPosition += 5;
-                }
-                ball.style.left = `${ballPosition}%`;
-            }, 20);
-            
-            // Engelleri oluştur
-            obstacleInterval = setInterval(createObstacle, 2000);
-        }
-        
-        // Engel oluştur
-        function createObstacle() {
-            const obstacle = document.createElement('div');
-            obstacle.className = 'obstacle';
-            obstacle.style.top = `${Math.random() * 100}px`;
-            gameArea.appendChild(obstacle);
-            obstacles.push({
-                element: obstacle,
-                x: 100,
-                y: parseFloat(obstacle.style.top)
-            });
-        }
-        
-        // Oyun döngüsü
-        function gameLoop() {
-            obstacles.forEach((obstacle, index) => {
-                obstacle.x -= gameSpeed;
-                obstacle.element.style.right = `${obstacle.x}%`;
-                
-                // Çarpışma kontrolü
-                if (obstacle.x < 50 && obstacle.x > 30 && 
-                    Math.abs(ballPosition - 50) < 20 && 
-                    Math.abs(parseFloat(obstacle.element.style.top) - 70) < 30) {
-                    endGame();
-                }
-                
-                // Engel ekrandan çıktı
-                if (obstacle.x < -10) {
-                    gameArea.removeChild(obstacle.element);
-                    obstacles.splice(index, 1);
-                    score++;
-                    gameSpeed += 0.1;
-                }
-            });
-            
-            if (isGameRunning) {
-                requestAnimationFrame(gameLoop);
-            }
-        }
-        
-        // Oyunu bitir
-        function endGame() {
-            isGameRunning = false;
-            clearInterval(gameInterval);
-            clearInterval(obstacleInterval);
-            alert(`Oyun bitti! Skor: ${score}`);
-            resetGame();
-        }
-        
-        // Oyunu sıfırla
-        function resetGame() {
-            obstacles.forEach(obstacle => {
-                gameArea.removeChild(obstacle.element);
-            });
-            obstacles = [];
-            score = 0;
-            gameSpeed = 2;
-            ballPosition = 50;
-            ball.style.left = '50%';
-        }
-        
-        // Oyunu kapat
-        document.getElementById('closeGame').addEventListener('click', () => {
-            gameContainer.style.transform = 'translateY(300px)';
-            if (isGameRunning) endGame();
-        });
-        
-        // Konfeti efekti
-        function createConfetti() {
-            const colors = ['#FFD60A', '#FF9F0A', '#FF375F', '#0A84FF', '#BF5AF2'];
-            
-            for (let i = 0; i < 150; i++) {
-                const confetti = document.createElement('div');
-                confetti.className = 'confetti';
-                
-                const size = Math.random() * 12 + 3;
-                const color = colors[Math.floor(Math.random() * colors.length)];
-                const angle = Math.random() * Math.PI * 2;
-                const velocity = Math.random() * 10 + 5;
-                const delay = Math.random() * 0.5;
-                const duration = Math.random() * 3 + 2;
-                
-                confetti.style.width = `${size}px`;
-                confetti.style.height = `${size}px`;
-                confetti.style.backgroundColor = color;
-                confetti.style.left = `${Math.random() * 100}vw`;
-                confetti.style.top = `-10px`;
-                confetti.style.borderRadius = Math.random() > 0.5 ? '50%' : '0';
-                
-                document.body.appendChild(confetti);
-                
-                // GSAP animasyonu
-                confetti.animate([
-                    { transform: `translateY(0) rotate(0deg)`, opacity: 1 },
-                    { transform: `translateY(${window.innerHeight + 10}px) rotate(${Math.random() * 360}deg)`, opacity: 0 }
-                ], {
-                    duration: duration * 1000,
-                    delay: delay * 1000,
-                    easing: 'cubic-bezier(0.1, 0.8, 0.3, 1)'
-                });
-                
-                setTimeout(() => {
-                    confetti.remove();
-                }, (duration + delay) * 1000);
-            }
-        }
-        
-        // Geri sayım fonksiyonu
+        // Geri sayım hesaplama
         function updateCountdown() {
             const now = new Date();
             const currentYear = now.getFullYear();
@@ -417,41 +136,87 @@
             const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
             const seconds = Math.floor((diff % (1000 * 60)) / 1000);
             
-            document.getElementById('days').textContent = days.toString().padStart(2, '0');
-            document.getElementById('hours').textContent = hours.toString().padStart(2, '0');
-            document.getElementById('minutes').textContent = minutes.toString().padStart(2, '0');
-            document.getElementById('seconds').textContent = seconds.toString().padStart(2, '0');
+            document.getElementById('countdown').textContent = 
+                `${days.toString().padStart(2, '0')}:${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
             
-            // Geri sayım bittiğinde
             if (diff <= 0) {
-                clearInterval(countdownInterval);
-                document.getElementById('celebration').classList.remove('hidden');
-                setTimeout(() => {
-                    document.getElementById('celebration').style.opacity = '1';
-                }, 100);
-                
-                createConfetti();
-                setInterval(createConfetti, 3000);
+                startCelebration();
             }
         }
-        
-        // Kutlama butonu
-        document.getElementById('celebrationButton').addEventListener('click', () => {
-            document.getElementById('celebration').style.opacity = '0';
+
+        // Kutlama fonksiyonu
+        function startCelebration() {
+            const celebration = document.getElementById('celebration');
+            
+            // Arkaplanı değiştir
+            document.body.classList.add('celebrating');
+            
+            // Kutlama ekranını göster
+            celebration.style.opacity = '1';
+            celebration.style.pointerEvents = 'auto';
+            
+            // Animasyonları başlat
             setTimeout(() => {
-                document.getElementById('celebration').classList.add('hidden');
-            }, 500);
-        });
-        
-        // Oyunu 30 saniye sonra otomatik aç
-        setTimeout(() => {
-            if (!document.getElementById('celebration').classList.contains('hidden')) return;
-            startGame();
-            gameLoop();
-        }, 30000);
-        
+                celebration.querySelector('h1').style.opacity = '1';
+                celebration.querySelector('h1').style.transform = 'translateY(0)';
+                celebration.querySelector('p').style.opacity = '1';
+                celebration.querySelector('p').style.transform = 'translateY(0)';
+            }, 300);
+            
+            // Konfeti yağmuru
+            createConfetti();
+            setInterval(createConfetti, 300);
+        }
+
+        // Konfeti oluşturma
+        function createConfetti() {
+            const colors = ['#ffffff', '#e0e0e0', '#a0a0a0', '#ffd700', '#c0c0c0'];
+            const shapes = ['circle', 'square', 'triangle'];
+            
+            for (let i = 0; i < 80; i++) {
+                const confetti = document.createElement('div');
+                confetti.className = 'confetti';
+                
+                // Rastgele özellikler
+                const size = Math.random() * 10 + 5;
+                const color = colors[Math.floor(Math.random() * colors.length)];
+                const shape = shapes[Math.floor(Math.random() * shapes.length)];
+                const left = Math.random() * 100;
+                const delay = Math.random() * 3;
+                const duration = Math.random() * 3 + 2;
+                
+                // Stilleri uygula
+                confetti.style.width = `${size}px`;
+                confetti.style.height = `${size}px`;
+                confetti.style.backgroundColor = color;
+                confetti.style.left = `${left}vw`;
+                confetti.style.animationDelay = `${delay}s`;
+                confetti.style.animationDuration = `${duration}s`;
+                
+                // Şekiller
+                if (shape === 'circle') {
+                    confetti.style.borderRadius = '50%';
+                } else if (shape === 'triangle') {
+                    confetti.style.clipPath = 'polygon(50% 0%, 0% 100%, 100% 100%)';
+                    confetti.style.backgroundColor = 'transparent';
+                    confetti.style.borderLeft = `${size/2}px solid transparent`;
+                    confetti.style.borderRight = `${size/2}px solid transparent`;
+                    confetti.style.borderBottom = `${size}px solid ${color}`;
+                    confetti.style.width = '0';
+                    confetti.style.height = '0';
+                }
+                
+                document.body.appendChild(confetti);
+                
+                // Temizle
+                setTimeout(() => {
+                    confetti.remove();
+                }, duration * 1000);
+            }
+        }
+
         // Geri sayımı başlat
-        const countdownInterval = setInterval(updateCountdown, 1000);
+        setInterval(updateCountdown, 1000);
         updateCountdown();
     </script>
 </body>
